@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no, interactive-widget=resizes-visual">
+<title>듀오 반성해</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
+:root{--bg:#0b0b10;--card:#16161f;--line:#2a2a38;--tx:#f2f2f5;--sub:#9a9aab;--acc:#ff9f0a;--bad:#ff5a5f;--ok:#32d583;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);--sr:env(safe-area-inset-right,0px);--sl:env(safe-area-inset-left,0px)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--tx);font-family:'Noto Sans KR',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input{font:inherit}
+a{color:var(--acc)}
+body.duo{overflow:hidden;position:fixed;inset:0}
+/* intro */
+#intro{padding:calc(var(--st) + 22px) 18px calc(var(--sb) + 40px);max-width:560px;margin:0 auto}
+.eyebrow{font-size:12px;letter-spacing:.08em;color:var(--acc);font-weight:700}
+h1{font-size:28px;font-weight:900;line-height:1.25;margin:6px 0 10px}
+.lead{color:var(--sub);font-size:14.5px;line-height:1.65}
+.go{display:block;width:100%;margin:22px 0 8px;padding:17px;border-radius:16px;background:var(--acc);color:#000;font-size:17px;font-weight:900}
+.list{margin-top:18px;display:grid;gap:8px}
+.list div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px;font-size:13.5px;line-height:1.5}
+.list b{color:var(--tx)} .list span{color:var(--sub)}
+.disc{margin-top:14px;font-size:11.5px;color:#6f6f80;line-height:1.55}
+/* duo stage */
+#duo{position:fixed;left:0;top:0;width:100%;height:100%;display:none;background:repeating-linear-gradient(45deg,#0d0d12 0 10px,#15151c 10px 20px);overflow:hidden;touch-action:manipulation}
+body.duo #duo{display:block} body.duo #intro{display:none}
+#rail{position:absolute;display:flex;gap:6px;z-index:60;align-items:center}
+#rail button{width:42px;height:42px;border-radius:12px;background:rgba(36,36,48,.95);font-size:17px;display:grid;place-items:center;position:relative;flex:none;border:1px solid #33334a}
+#rail button small{position:absolute;bottom:-1px;left:0;right:0;font-size:8.5px;color:#aaa;line-height:1}
+#rail .sep{flex:1}
+#pwr{background:linear-gradient(90deg,#3a3a46,#77778a)!important;overflow:hidden}
+#pwrFill{position:absolute;left:0;bottom:0;width:100%;height:0;background:rgba(50,213,131,.75)}
+#scr{position:absolute;background:#000;overflow:hidden;border-radius:14px;box-shadow:0 0 0 3px #2c2c38,0 0 0 4px #000;color:#111;font-size:14px;transform:translateZ(0)}
+.sb{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11.5px;font-weight:700;color:#fff;background:#000;flex:none}
+.view{position:absolute;inset:0;display:flex;flex-direction:column}
+.content{flex:1;position:relative;overflow:hidden;background:#000}
+.homebar{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:110px;height:5px;border-radius:3px;background:rgba(255,255,255,.75);z-index:30}
+.homebar-hit{position:absolute;bottom:0;left:0;right:0;height:16px;z-index:31}
+/* home */
+.home{position:absolute;inset:0;background:linear-gradient(160deg,#1d3557,#3d2b56 60%,#14213d);display:grid;align-content:start;gap:16px 8px;padding:18px 14px}
+.ico{display:flex;flex-direction:column;align-items:center;gap:5px;color:#fff;font-size:11px}
+.ico i{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-style:normal;font-size:26px;box-shadow:0 2px 8px #0005}
+/* app generic */
+.app{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column}
+.hdr{height:44px;display:flex;align-items:center;gap:6px;padding:0 10px;font-weight:700;border-bottom:1px solid #e3e3e8;background:#f7f7f9;flex:none;font-size:14px}
+.hdr .bk{font-size:22px;color:#0a84ff;padding:0 4px;line-height:1}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.col{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);aspect-ratio:9/19.5;max-width:100%}
+.bub{max-width:76%;padding:7px 11px;border-radius:15px;line-height:1.42;font-size:13.5px;word-break:break-all}
+.bub.l{background:#fff;align-self:flex-start} .bub.r{background:#ffd43b;align-self:flex-end}
+.bub.img{padding:3px;background:#fff}
+.bub.img img{display:block;max-width:100%;border-radius:12px}
+.ibar{display:flex;gap:6px;align-items:center;padding:6px 8px;background:#fff;border-top:1px solid #e3e3e8;flex:none}
+.ibar input{flex:1;min-width:0;height:34px;border-radius:17px;border:1px solid #ddd;padding:0 12px;font-size:16px;background:#f7f7f9;user-select:text;-webkit-user-select:text}
+.ibar button{height:34px;padding:0 10px;border-radius:17px;font-weight:700;font-size:13px}
+.tbtn{width:34px;height:34px;border-radius:10px;background:#e9e9ef;display:grid;place-items:center;font-size:15px}
+.row{display:flex;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #eee;font-size:13.5px;align-items:center;gap:10px}
+.sw{width:44px;height:26px;border-radius:13px;background:#ccc;position:relative;flex:none;transition:.2s}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 2px #0004}
+.sw.on{background:#34c759} .sw.on::after{left:20px}
+/* overlays in screen */
+.lock{position:absolute;inset:0;z-index:40;background:linear-gradient(160deg,#0e1424,#2a1838);color:#fff;display:flex;flex-direction:column;align-items:center;text-align:center}
+.off{position:absolute;inset:0;z-index:45;background:#000;display:grid;place-items:center;color:#333;font-size:12px}
+.toast{position:fixed;left:50%;top:22%;transform:translate(-50%,-50%) scale(.92);opacity:0;transition:.2s;background:rgba(20,20,28,.96);border:1px solid #3a3a4a;color:#fff;padding:11px 16px;border-radius:14px;font-size:13.5px;z-index:99;pointer-events:none;text-align:center;max-width:86vw;line-height:1.5}
+.toast.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+.toast b{color:var(--acc)}
+#help{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.92);display:none;overflow-y:auto;padding:calc(var(--st) + 16px) 18px calc(var(--sb) + 24px)}
+#help.on{display:block}
+#help .in{max-width:560px;margin:0 auto}
+#help h3{font-size:18px;margin:6px 0 10px}
+#help p{font-size:13px;color:#c9c9d4;line-height:1.6;margin:6px 0}
+.src{font-size:12px;line-height:1.9;margin-top:10px} .src a{color:#9a9aab}
+.ptabs{display:flex;gap:6px;margin:10px 0}
+.ptabs button{flex:1;padding:8px 0;border-radius:10px;font-size:12.5px;font-weight:700;background:#24242f;color:#bbb}
+.ptabs button.on{background:var(--acc);color:#000}
+.ptbl{width:100%;border-collapse:collapse;font-size:13px}
+.ptbl th{font-size:11px;color:#8a8a9a;font-weight:500;text-align:left;padding:6px 4px;border-bottom:1px solid #2a2a38}
+.ptbl td{padding:9px 4px;border-bottom:1px solid #22222e;vertical-align:top;line-height:1.4}
+.ptbl td.n{text-align:right;font-weight:900;white-space:nowrap;color:var(--acc)}
+.ptbl small{display:block;color:#7a7a8c;font-size:10.5px;font-weight:400}
+.pnote{font-size:11px;color:#6f6f80;line-height:1.6;margin-top:8px}
+.thumb{position:absolute;left:10px;bottom:16px;width:28%;border:3px solid #fff;border-radius:8px;z-index:50;box-shadow:0 4px 16px #000a;transition:.3s;pointer-events:none}
+</style>
+</head>
+<body>
+
+<!-- ================= INTRO ================= -->
+<div id="intro">
+  <div class="eyebrow">듀오 반성해 · 비공식 체험</div>
+  <h1>듀오 반성해</h1>
+  <p style="font-size:17px;font-weight:700;margin:-4px 0 10px">329만 원짜리 아이폰 듀오, 사기 전에 단점부터 겪어보기</p>
+  <p class="lead">지금 쓰는 폰 화면이 아이폰 듀오가 돼요. 톡·은행·영상·브라우저를 평소처럼 쓰는 동안 <b style="color:var(--tx)">리뷰에서 지적된 단점이 처음부터 전부 켜져 있어요.</b> 하나씩 누를 필요 없이 그냥 써보세요.</p>
+  <button class="go" id="start">듀오 모드 시작</button>
+  <div class="list">
+    <div>📕 <b>접힌 상태</b> <span>— 세로가 짧은 5.4″ 외부 화면. 진짜 키보드를 올리면 남는 공간이 이만큼</span></div>
+    <div>📖 <b>펼친 상태</b> <span>— 폰을 가로로 돌리면 7.6″ 내부 화면. 미최적화 앱은 검은 바, 접힘선 크랙, 오른쪽에 몰린 메뉴</span></div>
+    <div>📸 <b>캡처</b> <span>— 검은 바까지 찍혀요. 톡으로 보내고 열어서 또 캡처하면 바가 겹겹이</span></div>
+    <div>☝️ <b>잠금</b> <span>— Face ID 없음. 측면 버튼 지문으로만 열려요</span></div>
+    <div>🌡️ <b>발열 · 뿌연 검은색 · 254g</b> <span>— 영상 볼 때 발열, 무광 화면의 들뜬 암부, 내 폰과의 무게 차이</span></div>
+  </div>
+  <h2 style="font-size:20px;margin:30px 0 4px">💸 듀오 한 대 값이면</h2>
+  <p class="lead" style="font-size:13px">용량을 바꾸면 다시 계산돼요</p>
+  <div id="priceIntro"></div>
+  <p class="disc">애플과 무관한 비공식 시뮬레이션이에요. 화면 비율·무게는 공개 스펙으로 계산한 근사치이고, 인식 속도·발열·화면 질감은 리뷰 내용을 바탕으로 한 연출이에요. 웹페이지라서 진짜 카톡이나 다른 사이트 위에는 띄울 수 없고, 비슷하게 만든 체험용 앱 안에서만 동작해요.</p>
+</div>
+
+<!-- ================= DUO ================= -->
+<div id="duo">
+  <div id="rail">
+    <button id="pwr" title="측면 버튼"><span id="pwrFill"></span><span style="position:relative">⏻</span><small>지문</small></button>
+    <button id="fold">📖<small>펼치기</small></button>
+    <button id="snap">📸<small>캡처</small></button>
+    <button id="homeB">⌂<small>홈</small></button>
+    <button id="wB" style="font-size:12px;font-weight:900">254g</button>
+    <span class="sep"></span>
+    <button id="helpB">?</button>
+    <button id="exitB">✕</button>
+  </div>
+  <div id="scr"></div>
+  <div id="rotTip" style="position:absolute;left:50%;transform:translateX(-50%);display:none;z-index:55;background:rgba(20,20,28,.95);border:1px solid #3a3a4a;padding:9px 14px;border-radius:12px;font-size:13px;white-space:nowrap;color:#fff">🔄 폰을 <b style="color:var(--acc)">가로로</b> 돌려주세요</div>
+</div>
+
+<div id="help"><div class="in">
+  <button id="helpX" style="float:right;width:38px;height:38px;border-radius:50%;background:#2a2a36;font-size:17px">✕</button>
+  <h3>지금 켜져 있는 듀오 단점</h3>
+  <p>📕 <b>외부 화면</b>: 5.4″, 세로:가로 약 1.46:1. 아이폰 18 Pro 화면 면적의 90%를 기준으로 계산했고, 지금 폰 화면 폭에 맞춰 비율만 재현해요.</p>
+  <p>📖 <b>내부 화면</b>: 7.6″, 1.422:1. 가운데 세로 접힘선은 정면에선 거의 안 보여요. 크랙은 출시 직후 보고된 ‘ㄴ자’ 균열(접힘선 세로 금 + 오른쪽 끝까지 흰 줄)이고, 설정에서 끌 수 있어요.</p>
+  <p>⬛ <b>미최적화 앱</b>: 톡·은행은 펼쳐도 세로 화면 크기 그대로 + 양옆 검은 바, 영상은 한쪽 검은 띠, 브라우저는 오른쪽에 몰린 버튼 때문에 읽는 면적이 줄어요. 애플 기본 앱(사진·메모·설정·카메라)만 꽉 차요.</p>
+  <p>📸 <b>캡처</b>: 검은 바까지 그대로 저장돼요. 톡의 ＋로 보내고, 사진을 눌러 연 상태에서 또 캡처하면 바가 겹겹이 쌓이는 현상을 볼 수 있어요.</p>
+  <p>☝️ <b>잠금</b>: Face ID가 없어 화면을 탭하거나 얼굴로는 안 열려요. ⏻ 측면 버튼을 꾹 누르고 있어야 해요. ⏻를 짧게 누르면 화면이 꺼져요.</p>
+  <p>🌗 <b>나노텍스처</b>: 펼친 화면은 무광 코팅이라 검은색이 살짝 뿌옇게 보여요(대신 야외 반사는 줄어요).</p>
+  <p>🌡️ <b>발열</b>: 영상을 계속 틀면 상태바에 온도 표시가 올라가요. 촬영·페이스타임·일부 앱에서 뒷면이 꽤 뜨거워진다는 리뷰를 바탕으로 했어요.</p>
+  <p>📷 <b>카메라</b>: 망원 렌즈가 없어서 2배는 메인 센서를 잘라 쓰는 방식이고, 그 이상 광학 줌은 안 돼요.</p>
+  <p>💸 <b>가격표</b>: 홈 화면의 ‘가격표’ 앱에서 듀오 값으로 커피·그래픽카드·Claude Pro 등을 얼마나 살 수 있는지 볼 수 있어요. 이 앱도 미최적화 앱이라 펼치면 검은 바가 생겨요.</p>
+  <p>⚖️ <b>무게</b>: 254g으로 역대 아이폰 중 가장 무겁고, 갤럭시 Z 폴드8(201g)보다 53g 더 나가요. 설정에서 내 폰을 고르면 차이를 500원 동전 개수로 알려줘요.</p>
+  <p style="color:#77778a">그 밖에 화면으로 재현 못 하는 것: 가격 329만 원~(256GB), eSIM 전용(알뜰폰 제약), 맥세이프 액세서리 호환성, 힌지 이물질 이슈, 크랙 시 애플케어+ 없으면 내부 화면 수리비 999달러 보도.</p>
+  <div class="src">
+  <a href="https://futurechosun.com/archives/159864">더나은미래 – 공개·가격·스펙</a><br>
+  <a href="https://www.coxnews.co.kr/news/articleView.html?idxno=6502">콕스뉴스 – 크랙게이트 ‘ㄴ자’ 균열</a><br>
+  <a href="https://www.ddaily.co.kr/page/view/2026102409515538809">디지털데일리 – 크랙게이트·수리비</a><br>
+  <a href="https://www.news1.kr/it-science/general-it/6338986">뉴스1 – 애플, 화면 문제 인정·교체</a><br>
+  <a href="https://weibo.com/2/detail/5360782875561547">웨이보 – 캡처 검은 바 겹침 현상</a><br>
+  <a href="https://www.tomsguide.com/phones/iphones/polished-but-rough-the-common-flaws-in-the-iphone-duo-found-by-nine-different-reviewers">Tom's Guide – 리뷰어 9명이 꼽은 단점</a><br>
+  <a href="https://www.cnn.com/2026/10/21/tech/apple-iphone-duo-review">CNN – iPhone Duo 리뷰</a><br>
+  <a href="https://www.clien.net/service/board/use/19283778">클리앙 – 간단 사용기</a><br>
+  <a href="https://www.fmkorea.com/best/10470626639">에펨코리아 – 유튜버들이 말하는 단점</a><br>
+  <a href="https://www.ajd.co.kr/contents/basic-tip/detail/%EC%95%84%EC%9D%B4%ED%8F%B0_%EB%93%80%EC%98%A4_%EB%8B%A8%EC%A0%90_5%EA%B0%80%EC%A7%80_%EC%8A%A4%ED%8E%99_%EA%B8%B0%EB%8A%A5_%EA%B0%80%EA%B2%A9_%EC%B0%A8%EC%9D%B4_%EA%B5%AC%EB%A7%A4_%EC%A0%84_%ED%95%84%EB%8F%85-94281">아정당 – 단점 5가지</a><br>
+  <a href="https://namu.wiki/w/iPhone%20Duo/%EB%85%BC%EB%9E%80%20%EB%B0%8F%20%EB%AC%B8%EC%A0%9C%EC%A0%90">나무위키 – 논란 및 문제점</a><br>
+  <b style="color:#ccc">가격표 출처</b><br>
+  <a href="https://glasswallet.com/blog/starbucks-menu-price-guide">스타벅스 아메리카노 톨 4,700원</a><br>
+  <a href="https://www.khan.co.kr/article/202509160713001/">경향신문 – 서울 짜장면 평균 7,577원</a><br>
+  <a href="https://www.bizforms.co.kr/365guide/view.asp?number=162">2026년 최저임금 10,320원</a><br>
+  <a href="https://glasswallet.com/blog/netflix-pricing-guide">넷플릭스 프리미엄 17,000원</a><br>
+  <a href="https://support.claude.com/en/articles/8325606">Claude Pro 월 $20</a><br>
+  <a href="https://blog.kwt.co.kr/?p=3067">RTX 5090·5070 Ti 다나와 최저가 추이(10/27)</a><br>
+  <a href="https://www.wishbucket.io/items/3616646">라이젠 7 9800X3D 국내 판매가</a><br>
+  <a href="https://www.moyoplan.com/s/843ca3a5">아이폰 18 Pro·갤럭시 Z 폴드8 출고가</a><br>
+  <a href="https://www.ddaily.co.kr/page/view/2026102409515538809">듀오 내부 화면 수리비 $999</a><br>
+  <a href="https://www.poundsterlinglive.com/history/USD-KRW-2026">원/달러 환율</a>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= state ================= */
+const S={folded:true,locked:true,off:false,app:null,viewer:null,sheet:false,crack:true,wet:false,delay:0.9,myW:null,heat:0,playing:false,zoom:1,shots:[],heatWarned:false,
+  msgs:[{me:0,t:'오늘 회의 3시 맞지?'},{me:1,t:'응 자료는 내가 올려둘게'},{me:0,t:'근데 너 그 폴더블 아이폰 샀다며'},{me:0,t:'어때? 써보니까'}]};
+try{const p=JSON.parse(localStorage.getItem('duoPrefs')||'{}');['crack','wet','delay','myW'].forEach(k=>{if(p[k]!==undefined)S[k]=p[k]})}catch(e){}
+function savePrefs(){try{localStorage.setItem('duoPrefs',JSON.stringify({crack:S.crack,wet:S.wet,delay:S.delay,myW:S.myW}))}catch(e){}}
+const REPLIES=['ㅋㅋㅋ 진짜?','화면 좁다던데 괜찮아?','펼치면 넓긴 하겠다','329만원이면… 나는 패스','무겁지 않아?','캡처 보내봐','오 신기하다','검은 바 뭐야 ㅋㅋ','크랙 났다는 기사 봤는데','ㅇㅋ 이따 봐'];
+const APPS=[
+ {id:'talk',name:'톡',ic:'💬',bg:'#ffd43b',opt:'none'},
+ {id:'bank',name:'은행',ic:'🏦',bg:'#2f6bff',opt:'none'},
+ {id:'video',name:'영상',ic:'▶️',bg:'#ff3b30',opt:'half'},
+ {id:'web',name:'브라우저',ic:'🧭',bg:'#0a84ff',opt:'safari'},
+ {id:'photos',name:'사진',ic:'🖼️',bg:'#ffffff',opt:'full'},
+ {id:'memo',name:'메모',ic:'📝',bg:'#ffcc00',opt:'full'},
+ {id:'camera',name:'카메라',ic:'📷',bg:'#3a3a3c',opt:'full'},
+ {id:'settings',name:'설정',ic:'⚙️',bg:'#8e8e93',opt:'full'},
+ {id:'price',name:'가격표',ic:'💸',bg:'#34c759',opt:'none'},
+];
+const PHONES=[['갤럭시 S25',162],['갤럭시 S25+',190],['갤럭시 S25 울트라',218],['갤럭시 S24',167],['갤럭시 S24 울트라',232],['아이폰 에어',165],['아이폰 17',177],['아이폰 17 Pro',204],['아이폰 17 Pro Max',231],['아이폰 16',170],['아이폰 16 Pro',199],['아이폰 16 Pro Max',227],['아이폰 15',171],['아이폰 15 Pro',187]];
+const DUO_W=254, COIN=7.7;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let tt; function toast(m,ms=2600){const t=$('toast');t.innerHTML=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),ms)}
+
+/* ================= layout (real keyboard aware) ================= */
+let baseH=0, baseW=0, inputFocused=false;
+function vvp(){const v=window.visualViewport;return v?{w:v.width,h:v.height,top:v.offsetTop}:{w:innerWidth,h:innerHeight,top:0}}
+function layout(){
+  if(!document.body.classList.contains('duo'))return;
+  const v=vvp(), duo=$('duo'), rail=$('rail'), scr=$('scr'), rot=$('rotTip');
+  if(!inputFocused||Math.abs(v.w-baseW)>2){baseH=Math.max(v.h,inputFocused?baseH:0);baseW=v.w; if(!inputFocused)baseH=v.h}
+  const kb=inputFocused?Math.max(0,baseH-v.h):0;
+  duo.style.top=v.top+'px'; duo.style.height=v.h+'px'; duo.style.width=v.w+'px';
+  const land=v.w>baseH, vw=v.w, vh=v.h;
+  const cs=getComputedStyle(document.documentElement);
+  const st=parseFloat(cs.getPropertyValue('--st'))||0;
+  let W,H,L,T;
+  if(!land){ // rail on top
+    Object.assign(rail.style,{left:'8px',right:'8px',top:(st+6)+'px',bottom:'',width:'',height:'46px',flexDirection:'row'});
+    const top=st+60, availH=baseH-top-6;
+    if(S.folded){ W=Math.min(vw-8,availH/1.46); H=W*1.46; }
+    else { W=vw-8; H=W/1.422; }
+    L=(vw-W)/2;
+    const Hv=Math.max(110,H-kb);
+    T=kb?vh-Hv-4:top+Math.max(0,(availH-H)/2);
+    H=Hv;
+    rot.style.display=S.folded?'none':'block'; rot.style.top=(T+H+14)+'px';
+  }else{ // rail on right
+    Object.assign(rail.style,{top:'8px',bottom:'8px',right:'calc(var(--sr) + 8px)',left:'',width:'46px',height:'',flexDirection:'column'});
+    const availW=vw-70-parseFloat(cs.getPropertyValue('--sl')||0), availH=baseH-12;
+    if(S.folded){ H=availH; W=H/1.46; }
+    else { H=Math.min(availH,(availW-16)/1.422); W=H*1.422; }
+    L=Math.max(6,(availW-W)/2);
+    const Hv=Math.max(110,H-kb); T=kb?vh-Hv-4:(baseH-H)/2; H=Hv;
+    rot.style.display='none';
+  }
+  Object.assign(scr.style,{left:L+'px',top:T+'px',width:W+'px',height:H+'px'});
+  $('fold').innerHTML=S.folded?'📖<small>펼치기</small>':'📕<small>접기</small>';
+  if(land&&S.folded&&!layout._warned){layout._warned=1;toast('접힌 상태는 <b>세로</b>로 들고 쓰는 화면이에요')}
+}
+window.addEventListener('resize',layout);
+window.visualViewport&&visualViewport.addEventListener('resize',layout);
+window.visualViewport&&visualViewport.addEventListener('scroll',layout);
+
+/* ================= overlays (not captured) ================= */
+function crackSVG(){return `<svg data-ig viewBox="0 0 100 100" preserveAspectRatio="none" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:70">
+ <polyline points="50,22 50.6,28 49.5,34 50.8,40 49.6,46 50.7,52 49.6,58 50.5,63 50.2,67" fill="none" stroke="rgba(0,0,0,.7)" stroke-width="4" vector-effect="non-scaling-stroke"/>
+ <polyline points="50,22 50.6,28 49.5,34 50.8,40 49.6,46 50.7,52 49.6,58 50.5,63 50.2,67" fill="none" stroke="#fff" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+ <polyline points="50.8,40 52.6,38.6 54,39.5" fill="none" stroke="#fff" stroke-width="1" vector-effect="non-scaling-stroke"/>
+ <polyline points="49.6,58 47.6,59.8 46.4,59" fill="none" stroke="#fff" stroke-width="1" vector-effect="non-scaling-stroke"/>
+ <rect x="50.2" y="66.2" width="49.8" height="1.4" fill="#fff"/><rect x="50.2" y="67.6" width="49.8" height=".6" fill="#ff3df0" opacity=".85"/><rect x="50.2" y="65.6" width="49.8" height=".6" fill="#3dffb0" opacity=".75"/></svg>`}
+function innerOverlays(){if(S.folded)return '';
+  return `<div data-ig style="position:absolute;top:0;bottom:0;left:50%;width:12px;transform:translateX(-50%);pointer-events:none;z-index:69;background:linear-gradient(90deg,transparent,rgba(0,0,0,.05) 40%,rgba(255,255,255,.07) 52%,rgba(0,0,0,.04) 62%,transparent)"></div>
+  <div data-ig style="position:absolute;inset:0;pointer-events:none;z-index:68;background:rgba(170,176,190,.075);mix-blend-mode:screen"></div>
+  ${S.crack?crackSVG():''}`}
+
+/* ================= app wrappers ================= */
+function wrap(app,inner){ // inner = HTML of portrait-style app
+  if(S.folded||app.opt==='full') return inner;
+  if(app.opt==='none') return `<div style="position:absolute;inset:0;background:#000"><div class="col">${inner}</div></div>`;
+  if(app.opt==='half') return `<div style="position:absolute;inset:0;background:#000"><div style="position:absolute;top:0;bottom:0;left:0;width:78%">${inner}</div></div>`;
+  return inner;
+}
+const hdr=(t,extra='')=>`<div class="hdr"><button class="bk" data-act="home">‹</button><span style="flex:1">${t}</span>${extra}</div>`;
+
+/* ---- talk ---- */
+function msgHTML(m,i){return m.img?`<div class="bub img ${m.me?'r':'l'}"><img src="${m.img}" data-act="view" data-i="${i}"></div>`:`<div class="bub ${m.me?'r':'l'}">${esc(m.t)}</div>`}
+function talk(){
+  const viewer=S.viewer!==null?`<div style="position:absolute;inset:0;background:#000;z-index:5;display:flex;flex-direction:column"><div class="hdr" style="background:#111;color:#fff;border-color:#222"><button class="bk" data-act="closeview" style="color:#fff">✕</button><span>사진</span></div><div style="flex:1;display:grid;place-items:center;overflow:hidden"><img src="${S.msgs[S.viewer].img}" style="max-width:100%;max-height:100%"></div></div>`:'';
+  const sheet=S.sheet?`<div style="position:absolute;left:0;right:0;bottom:0;z-index:6;background:#fff;border-radius:14px 14px 0 0;box-shadow:0 -4px 16px #0003;padding:10px;max-height:60%;overflow:auto">
+     <div style="display:flex;justify-content:space-between;font-weight:700;font-size:13px;margin-bottom:8px"><span>캡처한 사진</span><button data-act="sheet">닫기</button></div>
+     ${S.shots.length?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">${S.shots.map((s,i)=>`<img src="${s}" data-act="sendshot" data-i="${i}" style="width:100%;border-radius:6px;border:1px solid #ddd">`).join('')}</div>`:`<p style="font-size:12.5px;color:#666;line-height:1.6">아직 캡처한 사진이 없어요.<br>옆의 📸 버튼으로 화면을 캡처해보세요.</p>`}</div>`:'';
+  return `<div class="app" style="background:#b2c7d9">${hdr('팀 단톡방 <span style="color:#888;font-weight:400">4</span>')}
+    <div id="tmsgs" class="scroll" style="flex:1;padding:8px;display:flex;flex-direction:column;gap:6px">${S.msgs.map(msgHTML).join('')}</div>
+    <form class="ibar" id="tform" autocomplete="off"><button type="button" class="tbtn" data-act="sheet">＋</button><input id="tin" placeholder="메시지 입력" enterkeyhint="send"><button style="background:#ffd43b">전송</button></form>
+    ${sheet}${viewer}</div>`;
+}
+/* ---- bank ---- */
+function bank(){return `<div class="app" style="background:#f2f4f8">${hdr('내 계좌')}<div class="scroll" style="flex:1;padding:14px">
+  <div style="background:#2f6bff;color:#fff;border-radius:16px;padding:16px"><div style="font-size:12px;opacity:.8">입출금 통장</div><div style="font-size:24px;font-weight:900;margin:6px 0">1,234,000원</div><div style="display:flex;gap:8px;margin-top:10px"><button data-act="nope" style="flex:1;background:#ffffff33;border-radius:10px;padding:8px;font-size:13px">이체</button><button data-act="nope" style="flex:1;background:#ffffff33;border-radius:10px;padding:8px;font-size:13px">내역</button></div></div>
+  <div style="font-weight:700;margin:16px 0 6px;font-size:13px">최근 거래</div>
+  ${[['스타벅스','-4,500'],['택시','-12,300'],['월급','+3,000,000'],['편의점','-6,800'],['통신요금','-55,000'],['배달','-23,500']].map(([a,b])=>`<div class="row" style="background:#fff;border-radius:10px;margin-bottom:6px;border:0"><span>${a}</span><b style="color:${b[0]=='+'?'#2f6bff':'#111'}">${b}원</b></div>`).join('')}
+  </div></div>`}
+/* ---- video ---- */
+function video(){const p=S.playing;
+  return `<div class="app" style="background:#0f0f0f;color:#fff">${hdr('<span style="color:#111">영상</span>')}
+   <div style="position:relative;aspect-ratio:16/9;background:radial-gradient(ellipse at 70% 120%,#3a2a12 0,#0a0a0a 45%,#000 70%);overflow:hidden;flex:none" data-act="play">
+     ${Array.from({length:30},(_,i)=>`<i style="position:absolute;left:${(i*37)%100}%;top:${(i*53)%70}%;width:2px;height:2px;border-radius:50%;background:#fff;opacity:${.35+(i%5)/9};${p?`animation:tw ${2+i%3}s infinite`:''}"></i>`).join('')}
+     <div style="position:absolute;inset:0;display:grid;place-items:center;font-size:${p?0:36}px">▶</div>
+     <div style="position:absolute;left:8px;bottom:6px;font-size:11px;opacity:.85">${p?'재생 중 · 밤하늘 4K':'밤하늘 4K · 탭해서 재생'}</div>
+     ${p?'<div style="position:absolute;left:0;bottom:0;height:3px;background:#f00;width:35%"></div>':''}</div>
+   <div class="scroll" style="flex:1;padding:10px;display:grid;gap:10px;align-content:start">
+     ${['어두운 장면에서 무광 화면 비교','폴더블 3종 내구성 테스트','카페 브이로그','야경 타임랩스'].map(t=>`<div style="display:flex;gap:8px"><div style="width:42%;aspect-ratio:16/9;border-radius:8px;background:#222"></div><div style="font-size:12.5px;line-height:1.4">${t}<div style="color:#888;font-size:11px;margin-top:3px">조회수 12만회</div></div></div>`).join('')}
+   </div></div>`}
+/* ---- web ---- */
+function web(){
+  const art=`<b style="font-size:17px;line-height:1.4;display:block;margin-bottom:8px">“폴더블 아이폰, 반년 써보니”</b><div style="color:#888;font-size:11px;margin-bottom:10px">테크 매거진 · 3분 읽기</div>${'펼친 화면이 넓다는 건 분명한 장점이다. 다만 앱마다 화면을 쓰는 방식이 달라 같은 넓이라도 실제로 읽을 수 있는 면적은 차이가 크다. '.repeat(6)}`;
+  const addr=`<form id="wform" style="padding:6px 8px;background:#f2f2f7;flex:none"><input id="win" value="news.example.com" style="width:100%;height:32px;border-radius:9px;border:0;background:#e3e3e9;text-align:center;font-size:16px;user-select:text;-webkit-user-select:text"></form>`;
+  if(S.folded) return `<div class="app">${addr}<div class="scroll" style="flex:1;padding:14px;font-size:14px;line-height:1.75">${art}</div>
+     <div style="display:flex;justify-content:space-around;padding:8px 0 14px;background:#f7f7f9;border-top:1px solid #e3e3e8;flex:none">${['‹','›','⇪','📖','⧉'].map(x=>`<button data-act="nope" style="font-size:18px;color:#0a84ff">${x}</button>`).join('')}<button data-act="home" style="font-size:13px;color:#0a84ff">홈</button></div></div>`;
+  return `<div class="app" style="flex-direction:row"><div style="flex:1;display:flex;flex-direction:column;min-width:0">${addr}<div class="scroll" style="flex:1;padding:14px 16px;font-size:14px;line-height:1.75">${art}</div></div>
+    <div style="width:30%;background:#f4f4f7;border-left:1px solid #ddd;display:flex;flex-direction:column;gap:10px;padding:12px 8px;align-items:center">${['‹','›','⇪','📖','⧉'].map(x=>`<button data-act="nope" class="tbtn" style="color:#0a84ff">${x}</button>`).join('')}<button data-act="home" class="tbtn" style="color:#0a84ff;font-size:11px">홈</button><div style="flex:1"></div></div></div>`;
+}
+/* ---- photos ---- */
+function photos(){
+  if(S.viewer!==null&&S.app==='photos'){const s=S.shots[S.viewer];
+    return `<div class="app" style="background:#000;${S.folded?'':'flex-direction:row'}"><div style="flex:1;display:flex;flex-direction:column;min-width:0">${S.folded?`<div class="hdr" style="background:#111;color:#fff;border-color:#222"><button class="bk" data-act="closeview">‹</button><span>캡처 ${S.viewer+1}</span></div>`:''}<div style="flex:1;display:grid;place-items:center;overflow:hidden"><img src="${s}" style="max-width:100%;max-height:100%"></div></div>
+      ${S.folded?'':`<div style="width:64px;background:#111;display:flex;flex-direction:column;gap:10px;padding:12px 0;align-items:center"><button class="tbtn" data-act="closeview" style="background:#222;color:#fff">‹</button><button class="tbtn" data-act="nope" style="background:#222;color:#fff">⇪</button><button class="tbtn" data-act="delshot" style="background:#222;color:#fff">🗑</button></div>`}</div>`}
+  const grid=S.shots.length?`<div style="display:grid;grid-template-columns:repeat(${S.folded?3:5},1fr);gap:3px">${S.shots.map((s,i)=>`<img src="${s}" data-act="vshot" data-i="${i}" style="width:100%;aspect-ratio:1;object-fit:cover">`).join('')}</div>`:`<p style="padding:20px;color:#888;font-size:13px;line-height:1.6">캡처한 사진이 여기 모여요.<br>옆의 📸로 화면을 캡처해보세요.</p>`;
+  if(S.folded) return `<div class="app">${hdr('사진')}<div class="scroll" style="flex:1">${grid}</div></div>`;
+  return `<div class="app" style="flex-direction:row"><div class="scroll" style="flex:1">${grid}</div><div style="width:64px;background:#f4f4f7;border-left:1px solid #ddd;display:flex;flex-direction:column;gap:10px;padding:12px 0;align-items:center"><button class="tbtn" data-act="home">‹</button><button class="tbtn" data-act="nope">＋</button><button class="tbtn" data-act="nope">⋯</button></div></div>`;
+}
+/* ---- memo ---- */
+function memo(){const body=`<b style="font-size:17px">듀오 체험 메모</b><p style="margin-top:8px;line-height:1.7;font-size:13.5px;color:#333">애플 기본 앱은 펼친 화면을 꽉 채워 써요. 광고에서 본 모습이 이거예요.<br><br>근데 메뉴 버튼은 전부 오른쪽에 있어요. 왼손으로 들고 눌러보세요.</p>`;
+  if(S.folded) return `<div class="app">${hdr('메모')}<div class="scroll" style="flex:1;padding:14px">${body}</div></div>`;
+  return `<div class="app" style="flex-direction:row"><div style="width:30%;background:#f2f2f6;border-right:1px solid #ddd;padding:10px">${['듀오 체험 메모','장보기','회의 안건','여행 준비'].map((x,i)=>`<div style="padding:9px;border-radius:8px;font-size:12.5px;${i?'':'background:#ffe58f'}">${x}</div>`).join('')}</div><div class="scroll" style="flex:1;padding:16px">${body}</div>
+    <div style="width:64px;background:#f7f7f9;border-left:1px solid #ddd;display:flex;flex-direction:column;gap:10px;padding:12px 0;align-items:center"><button class="tbtn" data-act="home">‹</button><button class="tbtn" data-act="rightui">✎</button><button class="tbtn" data-act="rightui">⇪</button><button class="tbtn" data-act="rightui">🗑</button></div></div>`}
+/* ---- camera ---- */
+function camera(){const z=S.zoom;
+  return `<div class="app" style="background:#000;color:#fff">
+   <div style="flex:1;position:relative;overflow:hidden"><div style="position:absolute;inset:0;transform:scale(${z===0.5?0.8:z});filter:${z===2?'blur(.7px) saturate(.9)':'none'};background:linear-gradient(#7fb3e6,#cfe3f5 55%,#6b8f5a 56%,#4e6e40)">
+     ${[12,26,44,60,78].map((x,i)=>`<div style="position:absolute;left:${x}%;bottom:44%;width:${9+i%3*3}%;height:${18+i*5}%;background:#5b6b80;border:1px solid #4a596c"></div>`).join('')}
+     <div style="position:absolute;left:46%;bottom:30%;width:8%;height:10%;border-radius:50% 50% 0 0;background:#2e4a22"></div></div>
+     ${z===2?'<div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);font-size:11px;background:#0008;padding:4px 8px;border-radius:99px">2× 크롭 줌 (망원 아님)</div>':''}</div>
+   <div style="display:flex;justify-content:center;gap:8px;padding:8px">${[0.5,1,2,3,5].map(v=>`<button data-act="zoom" data-z="${v}" style="width:38px;height:38px;border-radius:50%;font-size:12px;font-weight:700;background:${v===z?'#ffd60a':'#222'};color:${v===z?'#000':v>2?'#555':'#fff'}">${v}×</button>`).join('')}</div>
+   <div style="display:flex;align-items:center;justify-content:space-around;padding:6px 0 16px"><button data-act="home" style="font-size:13px">‹ 홈</button><button data-act="shutter" style="width:58px;height:58px;border-radius:50%;background:#fff;box-shadow:0 0 0 4px #000,0 0 0 6px #fff"></button><span style="width:40px"></span></div></div>`}
+/* ---- settings ---- */
+function settings(){
+  const diff=S.myW?DUO_W-S.myW:null;
+  const wInfo=S.myW?(diff>0?`<b style="color:#e5484d">+${diff}g</b> · 500원 동전 ${Math.round(diff/COIN)}개만큼 더 무거워요`:`내 폰이 더 무겁거나 같아요`):'내 폰을 고르면 차이를 계산해요';
+  const list=`<div class="scroll" style="flex:1;background:#f2f2f7">
+   <div style="padding:14px 14px 6px;font-size:12px;color:#888">체험 설정</div>
+   <div style="background:#fff">
+    <div class="row"><span>💥 크랙 표시 <small style="color:#999">(펼친 화면)</small></span><button class="sw ${S.crack?'on':''}" data-act="tg" data-k="crack"></button></div>
+    <div class="row"><span>💧 손에 물기·땀 <small style="color:#999">(지문 실패↑)</small></span><button class="sw ${S.wet?'on':''}" data-act="tg" data-k="wet"></button></div>
+    <div class="row"><span>지문 인식 시간</span><span style="display:flex;align-items:center;gap:6px"><input id="dl" type="range" min="0.3" max="2" step="0.1" value="${S.delay}" style="width:90px"><b style="width:34px">${S.delay}초</b></span></div>
+   </div>
+   <div style="padding:14px 14px 6px;font-size:12px;color:#888">무게 비교 · 아이폰 듀오 254g</div>
+   <div style="background:#fff"><div class="row" style="flex-direction:column;align-items:stretch">
+     <select id="ph" style="width:100%;padding:9px;border-radius:9px;border:1px solid #ddd;font-size:15px;background:#fafafa"><option value="">내 폰 선택</option>${PHONES.map(([n,g])=>`<option value="${g}" ${S.myW==g?'selected':''}>${n} (${g}g)</option>`).join('')}</select>
+     <span style="font-size:12.5px;color:#444;line-height:1.5">${wInfo}</span>
+     ${S.myW&&diff>0?`<span style="font-size:11.5px;color:#888;line-height:1.5">진짜로 느껴보려면 동전 ${Math.round(diff/COIN)}개를 폰 뒤에 붙이고 반나절 써보세요.</span>`:''}
+     <span style="font-size:10.5px;color:#aaa">목록 무게는 제조사 공식 스펙(케이스 제외)</span></div></div>
+   <div style="padding:14px 14px 6px;font-size:12px;color:#888">이 폰에 대해</div>
+   <div style="background:#fff;font-size:13px">
+    ${[['가격','329만 원~ (256GB)'],['SIM','eSIM 전용'],['카메라','메인+초광각 (망원 없음)'],['잠금해제','측면 Touch ID (Face ID 없음)'],['무게','254g'],['화면','외부 5.4″ · 내부 7.6″']].map(([a,b])=>`<div class="row"><span>${a}</span><span style="color:#888">${b}</span></div>`).join('')}
+   </div>
+   <div style="padding:16px;text-align:center"><button data-act="reset" style="color:#e5484d;font-size:13px">체험 처음부터 다시</button></div></div>`;
+  if(S.folded) return `<div class="app">${hdr('설정')}${list}</div>`;
+  return `<div class="app" style="flex-direction:row"><div style="width:30%;background:#f7f7f9;border-right:1px solid #ddd;padding:10px">${['체험 설정','무게 비교','이 폰에 대해'].map((x,i)=>`<div style="padding:9px;border-radius:8px;font-size:12.5px;${i?'':'background:#0a84ff;color:#fff'}">${x}</div>`).join('')}</div><div style="flex:1;display:flex;flex-direction:column;min-width:0">${list}</div>
+    <div style="width:64px;background:#f7f7f9;border-left:1px solid #ddd;display:flex;flex-direction:column;gap:10px;padding:12px 0;align-items:center"><button class="tbtn" data-act="home">‹</button><button class="tbtn" data-act="rightui">🔍</button></div></div>`;
+}
+const RENDER={talk,bank,video,web,photos,memo,camera,settings,price};
+
+/* ================= price compare ================= */
+// 확인 기준일 2026-11-03. 환율 1달러 = 1,325.93원 (2026-10-26 종가)
+const FX=1325.93;
+const DUO_PRICES=[['256GB',3290000],['512GB',3590000],['1TB',4190000],['2TB',5090000]];
+const COMPARE=[
+ {ic:'☕',n:'스타벅스 아메리카노 (톨)',p:4700,u:'잔',kind:'count',d:'스타벅스코리아 톨 사이즈'},
+ {ic:'🍜',n:'짜장면 한 그릇',p:7577,u:'그릇',kind:'count',d:'서울 평균 · 참가격 2025년 8월'},
+ {ic:'⏱️',n:'최저시급 노동',p:10320,u:'시간',kind:'hours',d:'2026년 최저임금 시급'},
+ {ic:'🎬',n:'넷플릭스 프리미엄',p:17000,u:'개월',kind:'months',d:'월 구독료 · 4K, 광고 없음'},
+ {ic:'🤖',n:'Claude Pro',p:Math.round(20*FX),u:'개월',kind:'months',d:'월 $20 환산 · 세금 별도일 수 있음'},
+ {ic:'🧠',n:'CPU 라이젠 7 9800X3D',p:720000,u:'개',kind:'count',d:'국내 판매가 72만 원 (2026년 8월)'},
+ {ic:'🎮',n:'그래픽카드 RTX 5070 Ti',p:1850000,u:'장',kind:'count',d:'다나와 최저가 185만 원 (10/27)'},
+ {ic:'🔥',n:'그래픽카드 RTX 5090',p:11190000,u:'장',kind:'count',d:'다나와 최저가 1,119만 원 (10/27)'},
+ {ic:'📱',n:'아이폰 18 Pro 256GB',p:1991000,u:'대',kind:'count',d:'국내 출고가'},
+ {ic:'📱',n:'갤럭시 Z 폴드8 256GB',p:2278100,u:'대',kind:'count',d:'국내 출고가'},
+ {ic:'💥',n:'듀오 내부 화면 수리비',p:Math.round(999*FX),u:'번',kind:'count',d:'애플케어+ 없을 때 $999 환산'},
+];
+let priceTier=0;
+function fmtWon(v){return v>=10000?(v%10000===0?(v/10000).toLocaleString()+'만 원':(Math.round(v/1000)/10).toLocaleString()+'만 원'):v.toLocaleString()+'원'}
+function cmpText(c,budget){const q=budget/c.p;
+  if(c.kind==='months'){const m=Math.floor(q),y=Math.floor(m/12),r=m%12;return [`${m}개월`,`${y?y+'년 ':''}${r?r+'개월':''} 구독`]}
+  if(c.kind==='hours'){const h=Math.ceil(q);return [`${h}시간`,`주 40시간 기준 약 ${Math.round(h/40*10)/10}주 일해야 함`]}
+  if(q<1) return [`${(Math.round(q*100)/100)}${c.u}`,`이거 1${c.u} 사려면 듀오 ${Math.round(c.p/budget*10)/10}대 값`];
+  const n=Math.floor(q), left=budget-n*c.p;
+  let sub=c.u==='잔'?`하루 1잔씩 약 ${Math.floor(n/365)?Math.floor(n/365)+'년 ':''}${Math.round((n%365)/30.4)}개월`:(left>=10000?`사고도 ${fmtWon(left)} 남음`:'');
+  if(c.n.includes('수리비')) sub=`한 번 깨지면 듀오 값의 ${Math.round(c.p/budget*100)}%`;
+  return [`${n.toLocaleString()}${c.u}`,sub]}
+function priceHTML(dark){
+  const [label,budget]=DUO_PRICES[priceTier];
+  return `<div class="ptabs">${DUO_PRICES.map(([l],i)=>`<button data-tier="${i}" class="${i===priceTier?'on':''}" ${dark?'':'style="background:'+(i===priceTier?'#0a84ff':'#e9e9ef')+';color:'+(i===priceTier?'#fff':'#333')+'"'}>${l}</button>`).join('')}</div>
+   <div style="font-size:13px;margin:4px 0 6px;${dark?'':'color:#333'}">아이폰 듀오 ${label} <b style="${dark?'color:var(--acc)':'color:#e5484d'}">${budget.toLocaleString()}원</b>이면</div>
+   <table class="ptbl" ${dark?'':'style="color:#111"'}><thead><tr><th>비교 대상</th><th style="text-align:right">살 수 있는 양</th></tr></thead><tbody>
+   ${COMPARE.map(c=>{const [a,b]=cmpText(c,budget);return `<tr><td>${c.ic} ${c.n}<small>${c.p.toLocaleString()}원 · ${c.d}</small></td><td class="n" ${dark?'':'style="color:#e5484d"'}>${a}<small>${b}</small></td></tr>`}).join('')}
+   </tbody></table>
+   <p class="pnote">가격 확인일 2026년 11월 3일. 달러 가격은 2026년 10월 26일 환율(1달러 ≈ ${FX.toLocaleString()}원)로 환산했어요. 그래픽카드·CPU는 시세라 매일 바뀌어요.</p>`}
+function renderPriceIntro(){const el=$('priceIntro');if(el)el.innerHTML=priceHTML(true)}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-tier]');if(!t)return;priceTier=+t.dataset.tier;renderPriceIntro();if(S.app==='price')render()});
+function price(){return `<div class="app" style="background:#fff">${hdr('듀오 가격표')}<div class="scroll" style="flex:1;padding:10px 12px 20px">${priceHTML(false)}</div></div>`}
+
+/* ================= render ================= */
+function clock(){return new Date().toLocaleTimeString('ko-KR',{hour:'numeric',minute:'2-digit',hour12:false})}
+function render(){
+  const scr=$('scr');
+  let main;
+  if(!S.app){
+    const cols=S.folded?4:6;
+    main=`<div class="home" style="grid-template-columns:repeat(${cols},1fr)">${APPS.map(a=>`<button class="ico" data-act="open" data-app="${a.id}"><i style="background:${a.bg}">${a.ic}</i>${a.name}</button>`).join('')}</div>`;
+  }else{const a=APPS.find(x=>x.id===S.app); main=wrap(a,RENDER[a.id]())}
+  const hot=S.heat>=40;
+  const lock=S.locked?`<div class="lock" id="lockL"><div style="margin-top:14%;font-size:13px;opacity:.85">${new Date().toLocaleDateString('ko-KR',{month:'long',day:'numeric',weekday:'long'})}</div><div style="font-size:${S.folded?54:60}px;font-weight:700;letter-spacing:-2px;line-height:1.1">${clock()}</div><div id="lmsg" style="margin-top:16px;font-size:13px;line-height:1.6;padding:0 20px;opacity:.95">🔒 측면 버튼 <b style="color:var(--acc)">⏻</b>을 꾹 누르고 있으세요</div></div>`:'';
+  scr.innerHTML=`<div class="view"><div class="sb"><span>${clock()}</span><span>${hot?`<span style="color:${S.heat>=70?'#ff5a5f':'#ff9f0a'}">🌡️ ${Math.round(36+S.heat*0.09)}°</span> `:''}eSIM ▮▮▮ 🔋</span></div>
+    <div class="content">${main}</div></div>
+    ${S.app?'<div class="homebar"></div><div class="homebar-hit" data-act="home"></div>':''}
+    ${lock}${S.off?'<div class="off">꺼진 화면 · ⏻ 눌러서 깨우기</div>':''}${innerOverlays()}`;
+  bindApp();
+}
+function bindApp(){
+  const tm=$('tmsgs'); if(tm) tm.scrollTop=tm.scrollHeight;
+  const f=$('tform'); if(f){f.onsubmit=e=>{e.preventDefault();const i=$('tin'),v=i.value.trim();if(!v)return;i.value='';addMsg({me:1,t:v});setTimeout(()=>addMsg({me:0,t:REPLIES[Math.floor(Math.random()*REPLIES.length)]}),900+Math.random()*900)}}
+  const wf=$('wform'); if(wf) wf.onsubmit=e=>{e.preventDefault();document.activeElement.blur();toast('체험용 브라우저라 실제 사이트는 열 수 없어요')};
+  const dl=$('dl'); if(dl) dl.oninput=e=>{S.delay=+e.target.value;savePrefs();e.target.nextElementSibling.textContent=S.delay+'초'};
+  const ph=$('ph'); if(ph) ph.onchange=()=>{S.myW=ph.value?+ph.value:null;savePrefs();render()};
+  document.querySelectorAll('#scr input').forEach(inp=>{inp.onfocus=()=>{inputFocused=true;setTimeout(layout,50);setTimeout(layout,400)};inp.onblur=()=>{inputFocused=false;setTimeout(layout,50);setTimeout(layout,400)}});
+}
+function addMsg(m){S.msgs.push(m);const tm=$('tmsgs');if(S.app==='talk'&&tm&&S.viewer===null){tm.insertAdjacentHTML('beforeend',msgHTML(m,S.msgs.length-1));tm.scrollTop=tm.scrollHeight}}
+
+/* ================= actions ================= */
+$('scr').addEventListener('click',e=>{
+  if(S.off) return;
+  if(S.locked){const m=$('lmsg');if(m){m.innerHTML='🙅 Face ID가 없어서 화면을 탭하거나 얼굴로는 안 열려요<br><b style="color:var(--acc)">⏻ 측면 버튼을 꾹 누르세요</b>';$('pwr').animate([{transform:'scale(1)'},{transform:'scale(1.15)'},{transform:'scale(1)'}],{duration:500,iterations:2})}return}
+  const t=e.target.closest('[data-act]'); if(!t) return;
+  const a=t.dataset.act, i=+t.dataset.i;
+  if(a==='open'){S.app=t.dataset.app;S.viewer=null;S.sheet=false;render();firstHints(S.app)}
+  else if(a==='home'){S.app=null;S.viewer=null;S.sheet=false;S.playing=false;render()}
+  else if(a==='sheet'){S.sheet=!S.sheet;render()}
+  else if(a==='sendshot'){S.sheet=false;S.msgs.push({me:1,img:S.shots[i]});render();setTimeout(()=>addMsg({me:0,t:REPLIES[7]}),1000);toast('사진을 눌러서 열고, 그 상태로 📸 또 캡처해보세요')}
+  else if(a==='view'){S.viewer=i;render()}
+  else if(a==='closeview'){S.viewer=null;render()}
+  else if(a==='vshot'){S.viewer=i;render()}
+  else if(a==='delshot'){S.shots.splice(S.viewer,1);S.viewer=null;render()}
+  else if(a==='play'){S.playing=!S.playing;render()}
+  else if(a==='zoom'){const z=+t.dataset.z; if(z>2){toast('망원 렌즈가 없어서 <b>2배(크롭)</b>까지만 돼요');return} S.zoom=z;render()}
+  else if(a==='shutter'){const f=document.createElement('div');f.style.cssText='position:absolute;inset:0;background:#000;z-index:80';$('scr').appendChild(f);setTimeout(()=>f.remove(),120)}
+  else if(a==='tg'){S[t.dataset.k]=!S[t.dataset.k];savePrefs();render()}
+  else if(a==='rightui'){if(!S.folded)toast('메뉴가 전부 <b>오른쪽</b>에 있어요<br>왼손으로 들면 엄지가 안 닿아요')}
+  else if(a==='nope'){toast('체험용 버튼이에요')}
+  else if(a==='reset'){S.shots=[];S.msgs=S.msgs.slice(0,4);S.app=null;S.locked=true;S.heat=0;S.heatWarned=false;hinted={};render()}
+});
+let hinted={};
+function firstHints(id){
+  const a=APPS.find(x=>x.id===id); if(S.folded||hinted[id+'u'])return; hinted[id+'u']=1;
+  if(a.opt==='none') toast(`<b>${a.name}</b> 앱은 아직 듀오용으로 업데이트가 안 돼서<br>펼쳐도 폰 크기 그대로 + 양옆 검은 바`,3200);
+  else if(a.opt==='half') toast('반쯤만 대응한 앱이라 <b>한쪽에 검은 띠</b>가 남아요',3000);
+  else if(a.opt==='safari') toast('버튼을 <b>오른쪽</b>에 몰아놔서 읽는 면적이 줄어요',3000);
+}
+
+/* ---- power / touch id ---- */
+let pTimer=null,pRaf=null,pStart=0;
+const pwr=$('pwr'),fill=$('pwrFill');
+function pReset(){clearTimeout(pTimer);pTimer=null;cancelAnimationFrame(pRaf);fill.style.height='0'}
+pwr.addEventListener('pointerdown',e=>{e.preventDefault();pStart=performance.now();
+  if(S.off){S.off=false;render();pStart=0;return}
+  if(!S.locked) return;
+  const m=$('lmsg'); if(m) m.innerHTML='지문 읽는 중…';
+  const anim=()=>{const p=Math.min(1,(performance.now()-pStart)/(S.delay*1000));fill.style.height=(p*100)+'%';if(p<1)pRaf=requestAnimationFrame(anim)};anim();
+  pTimer=setTimeout(()=>{pReset();
+    if(S.wet&&Math.random()<0.6){const m=$('lmsg');if(m)m.innerHTML='<b style="color:#ff5a5f">지문 인식 실패</b><br>손가락을 닦고 다시 대보세요';navigator.vibrate&&navigator.vibrate(120)}
+    else{S.locked=false;render()}},S.delay*1000)});
+['pointerup','pointerleave','pointercancel'].forEach(ev=>pwr.addEventListener(ev,()=>{
+  if(pTimer){pReset();const m=$('lmsg');if(m)m.innerHTML='손가락을 너무 빨리 뗐어요<br><b style="color:var(--acc)">⏻ 위에 그대로 올려두세요</b>';return}
+  if(ev==='pointerup'&&pStart&&!S.locked&&!S.off&&performance.now()-pStart<450){S.locked=true;S.off=true;S.playing=false;render()}
+  pStart=0}));
+
+/* ---- rail buttons ---- */
+$('fold').onclick=()=>{S.folded=!S.folded;S.viewer=S.app==='photos'?S.viewer:S.viewer;S.sheet=false;layout();render();
+  if(!S.folded&&!hinted.unfold){hinted.unfold=1;const land=innerWidth>innerHeight;toast(land?'펼쳤어요. 가운데 접힘선, 뿌연 검은색, 크랙까지 켜져 있어요':'펼쳤어요 · 폰을 <b>가로로</b> 돌리면 실제 비율이에요',3000)}
+  if(S.app) firstHints(S.app)};
+$('homeB').onclick=()=>{if(S.locked||S.off){toast('먼저 ⏻로 잠금해제하세요');return}S.app=null;S.viewer=null;S.sheet=false;S.playing=false;render()};
+$('wB').onclick=()=>{toast(S.myW?(DUO_W>S.myW?`지금 손에 든 폰보다 <b>${DUO_W-S.myW}g</b> 더 무거워요<br>500원 동전 ${Math.round((DUO_W-S.myW)/COIN)}개를 뒤에 붙인 느낌`:'지금 폰이 더 무거워요'):'설정 앱에서 내 폰을 고르면<br>무게 차이를 알려줘요',3200)};
+$('helpB').onclick=()=>$('help').classList.add('on');
+$('helpX').onclick=()=>$('help').classList.remove('on');
+$('exitB').onclick=()=>{document.body.classList.remove('duo');try{document.fullscreenElement&&document.exitFullscreen()}catch(e){}S.playing=false;window.scrollTo(0,0)};
+$('start').onclick=()=>{document.body.classList.add('duo');try{const r=document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();r&&r.catch&&r.catch(()=>{})}catch(e){}
+  layout();render();setTimeout(layout,300);setTimeout(()=>toast('접힌 듀오예요. 먼저 <b>⏻</b>을 꾹 눌러 잠금해제',3000),400)};
+
+/* ---- capture ---- */
+async function snap(){
+  if(S.off){toast('화면이 꺼져 있어요');return}
+  const scr=$('scr');
+  const f=document.createElement('div');f.style.cssText='position:fixed;inset:0;background:#fff;z-index:98;opacity:.85;transition:opacity .35s;pointer-events:none';document.body.appendChild(f);requestAnimationFrame(()=>requestAnimationFrame(()=>f.style.opacity=0));setTimeout(()=>f.remove(),450);
+  let c;
+  try{ if(!window.html2canvas) throw 0;
+    c=await html2canvas(scr,{backgroundColor:'#000',scale:Math.min(2,devicePixelRatio||1),logging:false,useCORS:true,ignoreElements:n=>n.hasAttribute&&n.hasAttribute('data-ig')});
+  }catch(e){ const r=scr.getBoundingClientRect();c=document.createElement('canvas');c.width=r.width*1.5;c.height=r.height*1.5;const x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,c.width,c.height);
+    const a=S.app&&APPS.find(z=>z.id===S.app); let cx=0,cw=c.width; if(a&&!S.folded&&a.opt==='none'){cw=c.height*9/19.5;cx=(c.width-cw)/2} if(a&&!S.folded&&a.opt==='half'){cw=c.width*.78}
+    x.fillStyle='#fff';x.fillRect(cx,0,cw,c.height);x.fillStyle='#111';x.font=`${c.height*.05}px sans-serif`;x.textAlign='center';x.fillText(a?a.name:'홈 화면',cx+cw/2,c.height/2)}
+  const url=c.toDataURL('image/jpeg',.85); S.shots.push(url);
+  const th=document.createElement('img');th.src=url;th.className='thumb';$('scr').appendChild(th);setTimeout(()=>{th.style.opacity=0},1800);setTimeout(()=>th.remove(),2200);
+  const a=S.app&&APPS.find(z=>z.id===S.app);
+  const viewingImg=S.app==='talk'&&S.viewer!==null;
+  if(!S.folded&&a&&(a.opt==='none'||a.opt==='half')) toast(viewingImg?'캡처 안에 캡처 — <b>검은 바가 겹겹이</b> 쌓여요<br>또 보내서 열고 캡처해보세요':'<b>검은 바까지 그대로</b> 캡처됐어요<br>톡에서 ＋를 눌러 보내보세요',3400);
+  else if(!S.folded&&S.crack) toast('캡처됐어요 · 크랙은 화면이 깨진 거라 캡처엔 안 찍혀요',2600);
+  else toast('캡처됐어요 · 사진 앱과 톡 ＋에서 볼 수 있어요',2200);
+}
+$('snap').onclick=snap;
+
+/* ---- heat loop ---- */
+setInterval(()=>{
+  if(!document.body.classList.contains('duo'))return;
+  const before=Math.floor(S.heat/10);
+  if(S.playing&&S.app==='video'&&!S.off) S.heat=Math.min(100,S.heat+(S.folded?2:3));
+  else S.heat=Math.max(0,S.heat-1);
+  if(S.heat>=60&&!S.heatWarned){S.heatWarned=true;toast('🌡️ 뒷면이 꽤 따뜻해졌어요<br><span style="color:#aaa">영상·촬영 때 발열은 리뷰에서 지적된 부분이에요</span>',3600)}
+  if(Math.floor(S.heat/10)!==before){const sb=document.querySelector('#scr .sb span:last-child');if(sb){const hot=S.heat>=40;sb.innerHTML=`${hot?`<span style="color:${S.heat>=70?'#ff5a5f':'#ff9f0a'}">🌡️ ${Math.round(36+S.heat*0.09)}°</span> `:''}eSIM ▮▮▮ 🔋`}}
+},1000);
+renderPriceIntro();
+setInterval(()=>{if(document.body.classList.contains('duo')){document.querySelectorAll('#scr .sb span:first-child').forEach(s=>s.textContent=clock())}},20000);
+</script>
+<style>@keyframes tw{0%,100%{opacity:.3}50%{opacity:1}}</style>
+</body>
+</html>

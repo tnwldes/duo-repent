@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-visual">
+<title>듀오 반성해 — 아이폰 듀오 단점 체험</title>
+<meta name="description" content="329만 원짜리 아이폰 듀오, 사기 전에 단점부터 겪어보기. 지금 쓰는 폰 브라우저에서 바로 체험하는 비공식 시뮬레이션.">
+<meta name="theme-color" content="#0b0b10">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="듀오 반성해 · DUO REPENT">
+<meta property="og:description" content="아이폰 듀오 단점, 사기 전에 내 폰에서 먼저 겪어보기 — Try the iPhone Duo’s downsides on your own phone">
+<meta property="og:type" content="website">
+<meta property="og:image" content="icons/icon-512.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="듀오 반성해">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/device.css">
+<link rel="stylesheet" href="css/effects.css">
+</head>
+<body>
+
+<!-- ================= INTRO ================= -->
+<main id="intro">
+  <div class="topline">
+    <div class="eyebrow" data-i18n="intro.eyebrow">듀오 반성해 · 비공식 시뮬레이션</div>
+    <div class="lang" role="group" data-i18n-aria="lang.label" aria-label="언어">
+      <button data-setlang="ko" aria-pressed="true">한국어</button><button data-setlang="en" aria-pressed="false">English</button>
+    </div>
+  </div>
+  <h1 data-i18n="intro.h1">듀오 반성해</h1>
+  <p class="tagline" data-i18n="intro.tagline">329만 원짜리 아이폰 듀오, 사기 전에 단점부터 겪어보기</p>
+  <p class="lead" data-i18n="intro.lead"></p>
+  <button class="go" id="start" data-i18n="intro.start">듀오 모드 시작</button>
+  <div class="list" id="introList"></div>
+  <p class="how" data-i18n="intro.how"></p>
+  <h2 class="sec" data-i18n="intro.priceH">💸 듀오 한 대 값이면</h2>
+  <p class="lead" style="font-size:13px" data-i18n="intro.priceSub"></p>
+  <div id="priceIntro"></div>
+  <p class="disc" data-i18n="intro.disc"></p>
+  <noscript><p class="disc">JavaScript를 켜야 체험할 수 있어요. / Please enable JavaScript.</p></noscript>
+</main>
+
+<!-- ================= DUO ================= -->
+<div id="duo">
+  <div id="rail">
+    <button id="pwr" data-i18n-aria="rail.pwrLabel"><span id="pwrFill"></span><span style="position:relative" aria-hidden="true">⏻</span><small data-i18n="rail.pwr">지문</small></button>
+    <button id="fold" data-i18n-aria="rail.foldLabelU">📖<small>펼치기</small></button>
+    <button id="snap" data-i18n-aria="rail.snapLabel">📸<small data-i18n="rail.snap">캡처</small></button>
+    <button id="homeB" data-i18n-aria="rail.homeLabel">⌂<small data-i18n="rail.home">홈</small></button>
+    <button id="wB" data-i18n-aria="rail.weightLabel" style="font-size:12px;font-weight:900">254g</button>
+    <span class="sep"></span>
+    <button id="menuB" data-i18n-aria="rail.menuLabel">☰<small data-i18n="rail.menu">메뉴</small></button>
+    <button id="exitB" data-i18n-aria="rail.exitLabel">✕</button>
+  </div>
+  <div id="scr" role="region" aria-label="iPhone Duo simulation"></div>
+  <div id="mbar"></div>
+</div>
+
+<div id="panel" role="dialog" aria-modal="true" aria-label="Menu"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="locales/ko.js"></script>
+<script src="locales/en.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/effects.js"></script>
+<script src="js/layout.js"></script>
+<script src="js/apps/common.js"></script>
+<script src="js/apps/talk.js"></script>
+<script src="js/apps/basic.js"></script>
+<script src="js/apps/settings.js"></script>
+<script src="js/price.js"></script>
+<script src="js/screenshot.js"></script>
+<script src="js/capture.js"></script>
+<script src="js/experiences.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

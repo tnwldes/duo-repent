@@ -1,0 +1,82 @@
+/* ===== Duo stage, rail, simulated screen, apps ===== */
+#duo{position:fixed;left:0;top:0;width:100%;height:100%;display:none;background:repeating-linear-gradient(45deg,#0d0d12 0 10px,#15151c 10px 20px);overflow:hidden;touch-action:manipulation}
+body.duo #duo{display:block} body.duo #intro{display:none}
+#rail{position:absolute;display:flex;gap:6px;z-index:60;align-items:center}
+#rail button{width:42px;height:42px;border-radius:12px;background:rgba(36,36,48,.95);font-size:17px;display:grid;place-items:center;position:relative;flex:none;border:1px solid #33334a}
+#rail button small{position:absolute;bottom:-1px;left:0;right:0;font-size:8.5px;color:#aaa;line-height:1;white-space:nowrap;overflow:hidden}
+#rail .sep{flex:1}
+#pwr{background:linear-gradient(90deg,#3a3a46,#77778a)!important;overflow:hidden;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#pwrFill{position:absolute;left:0;bottom:0;width:100%;height:0;background:rgba(50,213,131,.75)}
+
+/* mission bar: what am I testing / which mode */
+#mbar{position:absolute;z-index:55;display:flex;align-items:center;gap:8px;background:rgba(20,20,28,.95);border:1px solid #33334a;border-radius:12px;padding:6px 8px 6px 10px;color:#fff;font-size:12px;line-height:1.35}
+#mbar .mode{flex:none;font-weight:900;font-size:11.5px;padding:4px 7px;border-radius:8px;background:#2a2a38;white-space:nowrap}
+#mbar .mode.u{background:#1d3a57;color:#9fd4ff} #mbar .mode.f{background:#4a3a10;color:#ffd96a}
+#mbar .txt{flex:1;min-width:0;overflow:hidden}
+#mbar .txt>b{display:block;color:var(--acc);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#mbar .txt>span{display:block;color:#c9c9d4;font-size:11.5px;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+#mbar .chip{flex:none;font-size:11px;font-weight:700;padding:5px 8px;border-radius:8px;background:#2a2a38;color:#ddd;white-space:nowrap}
+#mbar .chip.on{background:#173d2a;color:#7ff0b3}
+#mbar .chip.act{background:var(--acc);color:#000}
+#duo.compact #mbar .txt>span{display:none}
+#mbar .txt>span b{color:var(--acc)}
+
+#scr{position:absolute;background:#000;overflow:hidden;border-radius:14px;box-shadow:0 0 0 3px #2c2c38,0 0 0 4px #000;color:#111;font-size:14px;transform:translateZ(0)}
+.sb{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11.5px;font-weight:700;color:#fff;background:#000;flex:none}
+.view{position:absolute;inset:0;display:flex;flex-direction:column}
+.content{flex:1;position:relative;overflow:hidden;background:#000}
+.homebar{position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:110px;height:5px;border-radius:3px;background:rgba(255,255,255,.75);z-index:30}
+.homebar-hit{position:absolute;bottom:0;left:0;right:0;height:16px;z-index:31}
+
+/* home */
+.home{position:absolute;inset:0;background:linear-gradient(160deg,#1d3557,#3d2b56 60%,#14213d);display:grid;align-content:start;gap:16px 8px;padding:18px 14px;overflow-y:auto}
+.ico{display:flex;flex-direction:column;align-items:center;gap:5px;color:#fff;font-size:11px;text-align:center;line-height:1.2}
+.ico i{width:54px;height:54px;border-radius:14px;display:grid;place-items:center;font-style:normal;font-size:26px;box-shadow:0 2px 8px #0005}
+
+/* app generic */
+.app{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column}
+.app.horiz{flex-direction:row}
+.hdr{height:44px;display:flex;align-items:center;gap:6px;padding:0 10px;font-weight:700;border-bottom:1px solid #e3e3e8;background:#f7f7f9;flex:none;font-size:14px;color:#111}
+.hdr .bk{font-size:22px;color:#0a84ff;padding:0 4px;line-height:1}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.col{position:absolute;top:0;bottom:0;left:50%;transform:translateX(-50%);aspect-ratio:9/19.5;max-width:100%}
+.bub{max-width:76%;padding:7px 11px;border-radius:15px;line-height:1.42;font-size:13.5px;word-break:break-all}
+.bub.l{background:#fff;align-self:flex-start} .bub.r{background:#ffd43b;align-self:flex-end}
+.bub.img{padding:3px;background:#fff}
+.bub.img img{display:block;max-width:100%;border-radius:12px}
+.ibar{display:flex;gap:6px;align-items:center;padding:6px 8px;background:#fff;border-top:1px solid #e3e3e8;flex:none}
+.ibar input{flex:1;min-width:0;height:34px;border-radius:17px;border:1px solid #ddd;padding:0 12px;font-size:16px;background:#f7f7f9;user-select:text;-webkit-user-select:text;color:#111}
+.ibar button{height:34px;padding:0 10px;border-radius:17px;font-weight:700;font-size:13px}
+.tbtn{width:34px;height:34px;border-radius:10px;background:#e9e9ef;display:grid;place-items:center;font-size:15px;flex:none}
+.row{display:flex;justify-content:space-between;padding:11px 14px;border-bottom:1px solid #eee;font-size:13.5px;align-items:center;gap:10px}
+.thumb{position:absolute;left:10px;bottom:16px;width:28%;border:3px solid #fff;border-radius:8px;z-index:50;box-shadow:0 4px 16px #000a;transition:.3s;pointer-events:none}
+
+/* side/bottom tool bar (shared "right-heavy UI" effect) */
+.side{width:64px;display:flex;flex-direction:column;gap:10px;padding:12px 0;align-items:center;flex:none;border-left:1px solid #ddd;background:#f7f7f9}
+.side.wide{width:30%}
+.side.dark{background:#111;border-color:#222}
+.side.dark .tbtn{background:#222;color:#fff}
+.bot{display:flex;justify-content:space-around;align-items:center;padding:8px 0 14px;flex:none;border-top:1px solid #e3e3e8;background:#f7f7f9}
+.bot.dark{background:#111;border-color:#222}
+.bot.dark .tbtn{background:#222;color:#fff}
+
+/* in-screen overlays */
+.lock{position:absolute;inset:0;z-index:40;background:linear-gradient(160deg,#0e1424,#2a1838);color:#fff;display:flex;flex-direction:column;align-items:center;text-align:center}
+.off{position:absolute;inset:0;z-index:45;background:#000;display:grid;place-items:center;color:#444;font-size:12px;text-align:center;padding:10px}
+
+/* screenshot lab app */
+.lab{position:absolute;inset:0;background:#000;color:#fff;display:flex;flex-direction:column}
+.lab .stage{flex:1;position:relative;overflow:hidden}
+.lab .stage.scroll{overflow-y:auto}
+.lab .tools{flex:none;display:flex;gap:6px;padding:6px 8px;background:#111;border-top:1px solid #222;align-items:center;flex-wrap:wrap}
+.lab .tools button,.lab .tools label{font-size:11.5px;font-weight:700;padding:7px 9px;border-radius:9px;background:#222;color:#eee;cursor:pointer}
+.lab .tools .on{background:#ffd60a;color:#000}
+.lab .empty{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px;text-align:center}
+.lab .empty p{font-size:12.5px;color:#bbb;line-height:1.6}
+.lab .pick{display:inline-block;background:#ffd60a;color:#000;font-weight:900;padding:11px 18px;border-radius:12px;font-size:14px;cursor:pointer}
+.lab .note{font-size:10.5px;color:#888;line-height:1.5}
+.lab .cut{position:absolute;left:0;right:0;border-top:2px dashed #ff5a5f;pointer-events:none}
+.lab .cut span{position:absolute;right:6px;top:2px;font-size:10.5px;background:#ff5a5f;color:#fff;padding:2px 6px;border-radius:6px}
+.lab .tag{position:absolute;left:8px;top:8px;font-size:10.5px;background:#000a;color:#fff;padding:3px 8px;border-radius:99px;z-index:2;max-width:80%}
+
+@keyframes tw{0%,100%{opacity:.3}50%{opacity:1}}

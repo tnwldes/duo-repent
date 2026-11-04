@@ -1,0 +1,18 @@
+/* ===== shared visual-effect layer (overlays are marked data-ig = not captured) ===== */
+.fx-layer{position:absolute;inset:0;pointer-events:none;z-index:68}
+.fx-crease{position:absolute;top:0;bottom:0;left:50%;width:12px;transform:translateX(-50%);pointer-events:none;z-index:69;
+  background:linear-gradient(90deg,transparent,rgba(0,0,0,.05) 40%,rgba(255,255,255,.07) 52%,rgba(0,0,0,.04) 62%,transparent)}
+.fx-haze{position:absolute;inset:0;pointer-events:none;z-index:68;background:rgba(170,176,190,.075);mix-blend-mode:screen}
+.fx-distort{position:absolute;top:0;bottom:0;left:50%;width:7%;transform:translateX(-50%);pointer-events:none;z-index:69;
+  -webkit-backdrop-filter:blur(1.1px) brightness(1.04);backdrop-filter:blur(1.1px) brightness(1.04);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06) 30%,rgba(0,0,0,.08) 50%,rgba(255,255,255,.06) 70%,transparent);
+  animation:fxShimmer 6s ease-in-out infinite}
+@keyframes fxShimmer{0%,100%{opacity:.75}50%{opacity:1}}
+.fx-crack{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:70}
+
+/* one-handed reach map */
+.fx-reach{position:absolute;inset:0;pointer-events:none;z-index:66}
+.fx-reach .lbl{position:absolute;top:30px;font-size:10.5px;font-weight:700;color:#fff;background:#d0303acc;padding:3px 7px;border-radius:7px}
+.fx-reach .lbl2{position:absolute;bottom:22px;font-size:10.5px;font-weight:700;color:#05361d;background:#32d583dd;padding:3px 7px;border-radius:7px}
+.fx-tap{position:absolute;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:2px solid #ff5a5f;pointer-events:none;z-index:75;animation:fxTap .5s ease-out forwards}
+@keyframes fxTap{from{transform:scale(.4);opacity:1}to{transform:scale(1.4);opacity:0}}
